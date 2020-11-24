@@ -124,7 +124,7 @@ namespace DivinityModManager.Util
 			return str;
 		}
 
-		private static DivinityModData ParseMetaFile(string metaContents)
+		private static DivinityModData ParseMetaFile(string metaContents, bool isBaseGameMod = false)
 		{
 			try
 			{
@@ -176,7 +176,7 @@ namespace DivinityModManager.Util
 						author = "Larian Studios";
 					}
 					*/
-					DivinityModData modData = new DivinityModData()
+					DivinityModData modData = new DivinityModData(isBaseGameMod)
 					{
 						UUID = uuid,
 						Name = name,
@@ -217,7 +217,7 @@ namespace DivinityModManager.Util
 							}
 						}
 					}
-					modData.UpdateDependencyText();
+					modData.UpdateDependencyInfo();
 
 					var publishVersionNode = moduleInfoNode.Descendants("node").Where(n => n.Attribute("id")?.Value == "PublishVersion").FirstOrDefault();
 					if (publishVersionNode != null)
@@ -1715,7 +1715,7 @@ namespace DivinityModManager.Util
 								using (var sr = new System.IO.StreamReader(stream))
 								{
 									string text = await sr.ReadToEndAsync();
-									var modData = ParseMetaFile(text);
+									var modData = ParseMetaFile(text, true);
 									if (modData != null)
 									{
 										DivinityApp.Log($"Added base mod: Name({modData.Name}) UUID({modData.UUID}) Author({modData.Author}) Version({modData.Version.VersionInt})");
